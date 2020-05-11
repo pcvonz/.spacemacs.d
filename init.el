@@ -77,6 +77,9 @@ This function should only modify configuration layer settings."
           dap-enable-ui-controls t
       )
      epub
+     typography
+     elfeed
+
      )
 
    ;; List of additional packages that will be installed without being
@@ -488,6 +491,9 @@ This function is called immediately after `dotspacemacs/init', before layer
 configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
+  (setq org-journal-file-format "%Y-%m-%d.org")
+  (setq org-agenda-files (directory-files-recursively "~/journal/" "\.org$"))
+  (setq undo-tree-auto-save-history t)
   )
 
 (defun dotspacemacs/user-load ()
@@ -503,6 +509,9 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
+  (add-hook 'org-mode-hook (spacemacs/toggle-visual-line-navigation-globally))
+  (define-key evil-normal-state-map (kbd "[-g") 'spacemacs/next-error)
+  (define-key evil-normal-state-map (kbd "]-g") 'spacemacs/previous-error)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -517,12 +526,15 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files
+ '(elfeed-feeds
    (quote
-    ("~/journal/projects/midiup/midiup.org" "~/journal/projects/ac/ac.org" "~/journal/daily.org")))
+    ("https://www.theatlantic.com/feed/all/" "https://www.3quarksdaily.com/feed")))
  '(org-capture-templates
    (quote
-    (("b" "Book notes" entry
+    (("n" "News clippings" entry
+      (file "~/journal/clippings.org")
+      "" :prepend t)
+     ("b" "Book notes" entry
       (file "~/journal/book_notes.org")
       "")
      ("c" "Coding task" entry
